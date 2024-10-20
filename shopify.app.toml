@@ -1,0 +1,23 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "2cb222971df9767bac455beba1dafcef"
+name = "ets-theme-extension"
+handle = "ets-theme-extension"
+application_url = "https://example.com/"
+embedded = true
+
+[build]
+dev_store_url = "hydroshop998.myshopify.com"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
+
+[webhooks]
+api_version = "2024-10"
+
+[pos]
+embedded = false
