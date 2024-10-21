@@ -1,10 +1,9 @@
 {{ 'ratings.stars.label' | t }}:
 
-{%- for i in (1..rating) -%}
-  ★
-{%- endfor -%}
-{%- assign blank_stars = 5 | minus: rating -%}
-{%- for i in (1..blank_stars) -%}
-  ☆
+{%- for i in (1..5) -%}
+  <label for="{{ 'ets-rating-radio-' | append: i }}">
+    <input type="radio" id="{{ 'ets-rating-radio-' | append: i }}" name="ets-rating-radio" hidden value="{{ i }}">
+    <span class="ets-rating-star">★</span>
+  </label>
 {%- endfor -%}
 

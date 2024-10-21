@@ -1,12 +1,17 @@
+
 {% assign avg_rating = block.settings.product.metafields.demo.avg_rating.value | round %}
-<span style="color:{{ block.settings.colour }}">
-  {% render 'stars', rating: avg_rating %}
-</span>
-{% if avg_rating >= 4 %}
-  <br>
-  <img src="{{ "thumbs-up.png" | asset_img_url: '15x' }}" height="15" width="15" loading="lazy">
-  {{ 'ratings.home.recommendationText' | t }}
-{% endif %}
+{% assign product_id = block.settings.product.id %}
+
+<div class="ets-rating-form" style="display:none">
+  <input type="hidden" value="{{ product_id }}">
+  <span class="">
+    {% render 'stars', rating: avg_rating %}
+  </span>
+  <div class="ets-rating-message-wrap">
+    <textarea class="ets-rating-messsage" rows="5" cols="30"></textarea>
+  </div>
+  <div class="ets-rating-submit">Submit</div>
+</div>
 
 {% schema %}
 {

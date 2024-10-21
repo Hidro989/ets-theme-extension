@@ -1,3 +1,8 @@
 name = "ets-theme-extension"
 type = "theme"
 
+[embeds]
+enabled = true
+
+[[scripts]]
+file = "assets/js/rating.js"
