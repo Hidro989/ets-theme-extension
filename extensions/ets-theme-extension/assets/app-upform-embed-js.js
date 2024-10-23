@@ -2,34 +2,43 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('JavaScript loaded successfully!');
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
+    
+    if (typeof Shopify !== 'undefined') {
+        if (Shopify.product) {
+            const product = Shopify.product;
+            console.log('Thông tin sản phẩm:', product);
+            
+          }
+    }
 
     let msgRating = $('.ets-rating-messsage');
     let allStar = $$('.ets-rating-star');
 
-    $$('input[name="ets-rating-radio"]').forEach(function(star) {
-        // star.addEventListener('change', function (e) {
-        //     console.log(this.value);
-        // });
-        star.addEventListener('mouseover', function (e) {
-            let currentValue = this.value;
+    allStar.forEach( function(star) {
+        star.addEventListener('click', function( e ) {
+            $('.ets-rating-stars').classList.remove('error');
+            $('.ets-rating-stars-messsage-error').remove();
+            let currentValue = this.previousElementSibling.value;
             allStar.forEach(function(ele, idx) {
-                if(idx <= currentValue) {
+                if(idx < currentValue) {
                     ele.style.color = 'gold';
                 }else {
                     ele.style.color = 'black';
                 }
             });
-            
-        })
+        });
     });
 
-    msgRating.addEventListener( 'focus', function (e) {
-        let parent = this.parentElement;
-        parent.classList.remove('error');
-        if($('.ets-rating-messsage-error')) {
-            $('.ets-rating-messsage-error').remove();
-        }
-    });
+
+    if (msgRating) {
+        msgRating.addEventListener( 'focus', function (e) {
+            let parent = this.parentElement;
+            parent.classList.remove('error');
+            if($('.ets-rating-messsage-error')) {
+                $('.ets-rating-messsage-error').remove();
+            }
+        });
+    }
 
     $('.ets-rating-form').style.display = 'block';
 
@@ -72,14 +81,37 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    async function saveRating(formData) {
+        // const {productID, rating, msg, productTitle,customerID, customerName, customerEmail} = data;
+        console.log(formData);
+        
+        const response = await fetch('https://huydev.deskbox.org/etsapp1/api/saveRating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+              },
+            body: JSON.stringify(formData),
+        });
+
+        let data = await response.json();
+        console.log(data.message);
+        
+    }
+
     $('.ets-rating-submit').addEventListener( 'click', (e) => {
         
-        let rate = 0;
-        let validateMsg = validateMessage(msgRating.value);
-        let message = '';
+        let rating = 0,
+        validateMsg = validateMessage(msgRating.value),
+        msg = '',
+        productID = $('input[name="ets-product-id"]').value,
+        productTitle = $('input[name="ets-product-title"]').value,
+        customerID = $('input[name="ets-customer-id"]').value,
+        customerName = $('input[name="ets-customer-name"]').value,
+        customerEmail = $('input[name="ets-customer-email"]').value;
+    
 
         if (validateMsg.isValid) {
-            message = validateMsg.sanitizedMessage;
+            msg = validateMsg.sanitizedMessage;
         }else {
             let msgWrap = $('.ets-rating-message-wrap');
             if($('.ets-rating-messsage-error')) {
@@ -91,15 +123,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 msgWrap.appendChild(errorMsg);
             }
             msgWrap.classList.add('error');
+
+            return;
         }
 
 
         $$('input[name="ets-rating-radio"]').forEach(radio => {
             if (radio.checked) {
-                rate = radio.value;
+                rating = radio.value;
             }
         });
-        console.log(rate, message);
+
+        if( rating <= 0 ) {
+            let ratingStars = $('.ets-rating-stars');
+            if($('.ets-rating-stars-messsage-error')) {
+                $('.ets-rating-stars-messsage-error').innerText = 'Vui lòng thêm đánh giá của bạn';
+            }else {
+                let errorMsg = document.createElement('p');
+                errorMsg.classList.add('ets-rating-stars-messsage-error');
+                errorMsg.innerText ='Vui lòng thêm đánh giá của bạn';
+                ratingStars.appendChild(errorMsg);
+            }
+            ratingStars.classList.add('error');
+
+            return;
+        }
+
+        saveRating({productID, rating, msg, productTitle,customerID, customerName, customerEmail});
         
     })
 });

@@ -16,6 +16,7 @@
     cursor: pointer;
 }
 
+.ets-rating-stars.error .ets-rating-stars-messsage-error,
 .ets-rating-message-wrap.error .ets-rating-messsage-error{
     display: block;
     color: red;
@@ -28,10 +29,11 @@
     border: 1px solid red;
 }
 
+.ets-rating-stars-messsage-error,
 .ets-rating-messsage-error {
     display: none;
 }
 
-#ets-rating-radio-1:hover {
-    color: gold;
+.ets-rating-star {
+    color: #000;
 }
