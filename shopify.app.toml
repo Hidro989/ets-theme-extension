@@ -11,10 +11,12 @@ dev_store_url = "hydroshop998.myshopify.com"
 include_config_on_deploy = true
 
 [auth]
-redirect_urls = [ "https://huydev.deskbox.org/etsapp1/api/auth/callback" ]
+redirect_urls = [
+  "https://huydev.deskbox.org/etsapp1/api/shopify/auth/callback"
+]
 
 [webhooks]
-api_version = "2024-10"
+api_version = "2024-07"
 
 [pos]
 embedded = false

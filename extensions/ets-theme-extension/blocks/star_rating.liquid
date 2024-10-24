@@ -1,40 +1,38 @@
+<div class="ets-reviews"></div>
+
 {% if customer and customer.orders.size > 0 %}
   {% assign has_purchased = false %}
   {% for order in customer.orders %}
-    {% for line_item in order.line_items %}
-      {% if line_item.product.id == product.id %}
-        {% assign has_purchased = true %}
-        {% break %}
-      {% endif %}
-    {% endfor %}
+    {% if order.financial_status == 'paid' %}
+      {% for line_item in order.line_items %}
+        {% if line_item.product.id == product.id %}
+          {% assign has_purchased = true %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
   {% endfor %}
 
-
   {% if has_purchased %}
-<div class="ets-rating-form" style="display:none">
-  <input type="hidden" value="{{ product.id }}" name="ets-product-id">
-  <input type="hidden" value="{{ product.title }}" name="ets-product-title">
-  <input type="hidden" value="{{ customer.id }}" name="ets-customer-id">
-  <input type="hidden" value="{{ customer.name }}" name="ets-customer-name">
-  <input type="hidden" value="{{ customer.email }}" name="ets-customer-email">
-  <span class="ets-rating-stars">
-    {% render 'stars' %}
-  </span>
-  <div class="ets-rating-message-wrap">
-    <textarea class="ets-rating-messsage" rows="5" cols="30"></textarea>
-  </div>
-  <div class="ets-rating-submit">Submit</div>
-</div>
-{% endif %}
+    <div class="ets-rating-form">
+      <input type="hidden" value="{{ product.id }}" name="ets-product-id">
+      <input type="hidden" value="{{ product.title }}" name="ets-product-title">
+      <input type="hidden" value="{{ customer.id }}" name="ets-customer-id">
+      <input type="hidden" value="{{ customer.name }}" name="ets-customer-name">
+      <input type="hidden" value="{{ customer.email }}" name="ets-customer-email">
+    </div>
+  {% endif %}
 {% endif %}
 
 {% schema %}
 {
   "name": "Star Rating",
-  "target": "section",
+  "target": "section"
 }
 {% endschema %}
-{% comment %} "settings": [
-  { "type": "product", "id": "product", "label": "product", "autofill": true },
-  { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
-] {% endcomment %}
+{% comment %}
+  "settings": [
+    { "type": "product", "id": "product", "label": "product", "autofill": true },
+    { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
+  ]
+{% endcomment %}

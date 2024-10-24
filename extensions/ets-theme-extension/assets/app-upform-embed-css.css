@@ -1,14 +1,98 @@
+.ets-rating-form {
+    position: relative;
+    display: none;
+}
+
+.ets-rating-form.editing .ets-rating-submit,
+.ets-rating-form.new .ets-rating-submit {
+    display: inline-block;
+}
+
+.ets-rating-form.editing .ets-rating-status,
+.ets-rating-form.editing .ets-rating-action-close,
+.ets-rating-form.pending .ets-rating-action-wrap,
+.ets-rating-form.pending .ets-rating-status {
+    display: block;
+}
+.ets-rating-form.editing .ets-rating-right-box,
+.ets-rating-form.pending .ets-rating-right-box {
+    display: flex;
+}
+
+.ets-rating-right-box {
+    display: none;
+    gap: 16px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.ets-rating-status {
+    display: none;
+    padding: 2px 4px;
+    background: orange;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 18px;
+}
+
+.ets-rating-action-wrap {
+    display: none;
+    position: relative;
+}
+
+.ets-rating-action-wrap > span {
+    display: inline-block;
+    transform: rotate(90deg);
+    font-weight: bold;
+    cursor: pointer;    
+}
+
+.ets-rating-action-wrap:hover .ets-rating-action {
+    display: block;
+}
+
+.ets-rating-action {
+    display: none;
+    position: absolute;
+    top: 22px;
+    right: -34px;
+    list-style-type: none;
+    transform: unset;
+    background: #fff;
+    border: 1px solid #ededed;
+    padding: 0;
+    margin: 0;
+    border-radius: 4px;
+}
+
+.ets-rating-action-close,
+.ets-rating-action li {
+    cursor: pointer;
+    user-select: none;  
+    padding: 0 10px;
+}
+
+.ets-rating-action li:hover {
+    background: #ededed;
+}
+
+.ets-rating-action-close {
+    display: none;
+}
+
 .ets-rating-messsage {
+    padding: 8px;
     width: 100%;
 }
 
-:focus {
+.ets-rating-messsage:focus {
     outline: none;
     border: none;
 }
 
 .ets-rating-submit {
-    display: inline-block;
+    display: none;
     padding: 8px 10px;
     background: #000;
     color: #fff;
@@ -16,7 +100,16 @@
     cursor: pointer;
 }
 
-.ets-rating-stars.error .ets-rating-stars-messsage-error,
+.ets-rating-message-wrap {
+    margin-top: 10px;
+}
+
+.ets-rating-stars > label {
+    cursor: pointer;
+    user-select: none;
+}
+
+.ets-rating-stars.error .ets-rating-messsage-error,
 .ets-rating-message-wrap.error .ets-rating-messsage-error{
     display: block;
     color: red;
@@ -29,11 +122,38 @@
     border: 1px solid red;
 }
 
-.ets-rating-stars-messsage-error,
+
 .ets-rating-messsage-error {
     display: none;
 }
 
 .ets-rating-star {
     color: #000;
+}
+
+.ets-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ets-reviews-item {
+    display: block;
+    width: 100%;
+    padding: 8px;
+}
+
+.ets-reviews-item + .ets-reviews-item {
+    border-top: 1px solid #dedede;
+}
+
+.ets-reviews-item .ets-reviews-name {
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.ets-reviews-item .ets-reviews-star {
+    display: block;
+    color: gold;
 }
