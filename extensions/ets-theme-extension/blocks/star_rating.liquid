@@ -15,11 +15,11 @@
 
   {% if has_purchased %}
     <div class="ets-rating-form">
-      <input type="hidden" value="{{ product.id }}" name="ets-product-id">
-      <input type="hidden" value="{{ product.title }}" name="ets-product-title">
-      <input type="hidden" value="{{ customer.id }}" name="ets-customer-id">
-      <input type="hidden" value="{{ customer.name }}" name="ets-customer-name">
-      <input type="hidden" value="{{ customer.email }}" name="ets-customer-email">
+      <input type="hidden" value="{{ product.id }}" name="ets_product_id">
+      <input type="hidden" value="{{ product.title }}" name="ets_product_title">
+      <input type="hidden" value="{{ customer.id }}" name="ets_customer_id">
+      <input type="hidden" value="{{ customer.name }}" name="ets_customer_name">
+      <input type="hidden" value="{{ customer.email }}" name="ets_customer_email">
     </div>
   {% endif %}
 {% endif %}

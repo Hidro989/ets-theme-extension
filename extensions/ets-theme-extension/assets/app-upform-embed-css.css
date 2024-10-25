@@ -140,7 +140,7 @@
 .ets-reviews-item {
     display: block;
     width: 100%;
-    padding: 8px;
+    padding: 8px 0;
 }
 
 .ets-reviews-item + .ets-reviews-item {
