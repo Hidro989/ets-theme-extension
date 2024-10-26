@@ -2,16 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("JavaScript loaded successfully!");
   const $ = document.querySelector.bind(document);
   const $$ = document.querySelectorAll.bind(document);
+  const APPURL = 'https://huydev.deskbox.org/etsapp1/api';
 
   const ETSValidate = {
     validate(rule, currentValue, comparativeValue) {
       let validateFunc = {
-        min: (currentValue, comparativeValue) => {
-          currentValue = parseFloat(currentValue);
-          comparativeValue = parseFloat(comparativeValue);
-
-          return currentValue >= comparativeValue;
-        },
+        min: (currentValue, comparativeValue) => parseFloat(currentValue) >= parseFloat(comparativeValue),
         max: (currentValue, comparativeValue) => {
           if (typeof currentValue === "string") {
             currentValue = parseFloat(currentValue.trim().length);
@@ -23,16 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           return currentValue <= comparativeValue;
         },
-        required: (currentValue) => {
-          return currentValue.length > 0;
-        },
-        email: (currentValue) => {
-          if (currentValue){
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(currentValue);
-          }
-          return true;
-        }
+        required: (currentValue) => currentValue.length > 0,
+        email: (currentValue) => !current || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(current)
       };
 
       return validateFunc[rule](currentValue, comparativeValue);
@@ -54,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     validateFields(data) {
       const errors = {};
-
       for (const field in data) {
         const fieldData = data[field];
         const rules = fieldData.validateRule.split("|");
@@ -66,15 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
             ruleName &&
             !this.validate(ruleName, fieldData.value, ruleValue)
           ) {
-            if (!errors[fieldData.name]) {
-              errors[fieldData.name] = [];
-            }
+            errors[fieldData.name] ||= [];
             errors[fieldData.name].push(fieldData.validateMessage[ruleName]);
           }
         });
       }
 
-      return errors ? errors : null;
+      return Object.keys(errors).length ? errors : null;
     },
   };
 
@@ -109,27 +94,19 @@ document.addEventListener("DOMContentLoaded", () => {
             let currentValue = eleSelected.previousElementSibling.value;
 
             $$(".ets-rating-star").forEach(function (ele, idx) {
-              if (idx < currentValue) {
-                ele.style.color = "gold";
-              } else {
-                ele.style.color = "black";
-              }
+              ele.style.color = idx < currentValue ? "gold" : "black";
             });
           }
           break;
         case 'ets-rating-action-edit':
-          this.formReview.classList.remove("pending");
-          this.formReview.classList.add("editing");
-          $('.ets-rating-messsage').disabled = false;
+          this.toggleEditState(false);
           break;
         case 'ets-rating-action-delete':
           this.deleteRating(this.currentReviewId);
           break;
         case 'ets-rating-action-close':
-          this.formReview.classList.remove("editing");
-          this.formReview.classList.add("pending");
-          $('.ets-rating-messsage').disabled = true;
-          break;      
+          this.toggleEditState(true);
+          break;
       }
     },
 
@@ -139,13 +116,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await fetch(
-          `https://huydev.deskbox.org/etsapp1/api/getDataRating?productID=${productID}&customerID=${customerID}`
+          `${APPURL}/getDataRating?productID=${productID}&customerID=${customerID}`
         );
 
         let data = await response.json();
-        
+
         if (data.status === "success") {
-          const { reviews, reviewOfCustomer, formField } = data.data;          
+          const { reviews, reviewOfCustomer, formField } = data.data;
           this.renderReviews(reviews);
           this.renderFormField(reviewOfCustomer, formField);
           this.formField = formField;
@@ -172,12 +149,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let html = reviews.map((review) => {
           return `
                     <div class="ets-reviews-item">
-                        <span class="ets-reviews-name">${
-                          review.customerName
-                        }</span>
+                        <span class="ets-reviews-name">${review.customerName
+            }</span>
                         <span class="ets-reviews-star">${renderStars(
-                          review.rating
-                        )}</span>
+              review.rating
+            )}</span>
                         <p>
                         ${review.message}
                         </p>
@@ -190,13 +166,10 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     renderFormField(reviewOfCustomer, formField) {
-      console.log(reviewOfCustomer);
-      
+
       if (reviewOfCustomer[0]) {
         this.currentReviewId = reviewOfCustomer[0]._id;
-        if (reviewOfCustomer[0].ratingStatus === "approved") {
-          return;
-        }
+        if (reviewOfCustomer[0].ratingStatus === "approved") return;
       }
 
       let currentState = reviewOfCustomer.length > 0 ? "pending" : "new";
@@ -235,12 +208,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 id="ets-rating-radio-${choice}"
                                 name="${element.name}"
                                 hidden
-                                value="${choice}" ${element.value && element.value === choice ? 'checked': ''}>
-                                <span class="ets-rating-star" ${
-                                  element.value && element.value >= choice
-                                    ? 'style="color:gold;"'
-                                    : ""
-                                } >★</span>
+                                value="${choice}" ${element.value && element.value === choice ? 'checked' : ''}>
+                                <span class="ets-rating-star" ${element.value && element.value >= choice
+                    ? 'style="color:gold;"'
+                    : ""
+                  } >★</span>
                             </label>
                         `;
               })
@@ -257,14 +229,11 @@ document.addEventListener("DOMContentLoaded", () => {
               "beforeend",
               `
                         <div class="ets-rating-message-wrap">
-                            <textarea class="ets-rating-messsage" ${
-                              element.placeHolder
-                                ? 'placeholder="' + element.placeHolder + '"'
-                                : ""
-                            } rows="${element.rows}" cols="${
-                element.cols
-              }" name="${element.name}" ${element.value ? "disabled" : ""}>${
-                element.value || ""
+                            <textarea class="ets-rating-messsage" ${element.placeHolder
+                ? 'placeholder="' + element.placeHolder + '"'
+                : ""
+              } rows="${element.rows}" cols="${element.cols
+              }" name="${element.name}" ${element.value ? "disabled" : ""}>${element.value || ""
               }</textarea>
                         </div>
                     `
@@ -280,12 +249,18 @@ document.addEventListener("DOMContentLoaded", () => {
       this.formReview.classList.add(currentState);
     },
 
-    async deleteRating( reviewId ) {
+    toggleEditState(isPending) {
+      this.formReview.classList.toggle("pending", isPending);
+      this.formReview.classList.toggle("editing", !isPending);
+      $(".ets-rating-messsage").disabled = isPending;
+    },
+
+    async deleteRating(reviewId) {
       if (confirm('Do you want to delete this review?')) {
         try {
           const response = await fetch(
-            `https://huydev.deskbox.org/etsapp1/api/deleteRating?reviewId=${reviewId}`);
-  
+            `${APPURL}/deleteRating?reviewId=${reviewId}`);
+
           let data = await response.json();
           if (data.status === "success") {
             console.log(data.message);
@@ -297,26 +272,23 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log(error);
         }
       }
-      
+
     },
 
     async saveRating(formData) {
-      if (this.currentReviewId) {
-        formData.ets_review_id = this.currentReviewId;
-      }
+      if (this.currentReviewId) formData.ets_review_id = this.currentReviewId;
+
       formData.ets_rating_message = ETSValidate.escapeHtml(
         formData.ets_rating_message
       );
 
-      
+
       try {
         const response = await fetch(
-          "https://huydev.deskbox.org/etsapp1/api/saveRating",
+          `${APPURL}/saveRating`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json", },
             body: JSON.stringify(formData),
           }
         );
@@ -352,9 +324,10 @@ document.addEventListener("DOMContentLoaded", () => {
       let errors = ETSValidate.validateFields(this.formField);
       if (Object.keys(errors).length > 0) {
         this.renderError(errors);
-        return;
+      } else {
+        this.saveRating(extractValues(this.formField));
+
       }
-      this.saveRating(extractValues(this.formField));
     },
 
     clearError() {
@@ -388,37 +361,26 @@ document.addEventListener("DOMContentLoaded", () => {
         for (const keyError in errors) {
           if (Object.prototype.hasOwnProperty.call(errors, keyError)) {
             const objError = errors[keyError];
-
+            let container = null,
+              msgError = null;
             if (keyError === "ets_rating_radio") {
-              let ratingStars = $(".ets-rating-stars"),
-                startMsgError = ratingStars.querySelector(
-                  ".ets-rating-messsage-error"
-                );
-              if (startMsgError) {
-                startMsgError.innerText = objError[0];
-              } else {
-                let errorMsg = document.createElement("p");
-                errorMsg.classList.add("ets-rating-messsage-error");
-                errorMsg.innerText = objError[0];
-                ratingStars.appendChild(errorMsg);
-              }
-              ratingStars.classList.add("error");
+              container = $(".ets-rating-stars");
+
             }
             if (keyError === "ets_rating_message") {
-              let msgWrap = $(".ets-rating-message-wrap"),
-                msgRatingError = msgWrap.querySelector(
-                  ".ets-rating-messsage-error"
-                );
-              if (msgRatingError) {
-                msgRatingError.innerText = objError[0];
-              } else {
-                let errorMsg = document.createElement("span");
-                errorMsg.classList.add("ets-rating-messsage-error");
-                errorMsg.innerText = objError[0];
-                msgWrap.appendChild(errorMsg);
-              }
-              msgWrap.classList.add("error");
+              container = $(".ets-rating-message-wrap");
             }
+
+            msgError = container.querySelector(".ets-rating-messsage-error");
+            if (msgError) {
+              msgError.innerText = objError[0];
+            } else {
+              let errorMsg = document.createElement("p");
+              errorMsg.classList.add("ets-rating-messsage-error");
+              errorMsg.innerText = objError[0];
+              container.appendChild(errorMsg);
+            }
+            container.classList.add("error");
           }
         }
       }
