@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return currentValue <= comparativeValue;
         },
         required: (currentValue) => currentValue.length > 0,
-        email: (currentValue) => !current || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(current)
+        email: (currentValue) => !currentValue || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(currentValue)
       };
 
       return validateFunc[rule](currentValue, comparativeValue);
@@ -276,8 +276,11 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     async saveRating(formData) {
+      let orderID = $('[name="ets_order_id"]').value;
+      if (orderID) formData.ets_order_id = orderID;
       if (this.currentReviewId) formData.ets_review_id = this.currentReviewId;
-
+      
+      
       formData.ets_rating_message = ETSValidate.escapeHtml(
         formData.ets_rating_message
       );
@@ -321,8 +324,9 @@ document.addEventListener("DOMContentLoaded", () => {
       this.clearError();
       this.assignValueToFormField();
 
-      let errors = ETSValidate.validateFields(this.formField);
-      if (Object.keys(errors).length > 0) {
+      let errors = ETSValidate.validateFields(this.formField);     
+      
+      if (errors && Object.keys(errors).length > 0) {
         this.renderError(errors);
       } else {
         this.saveRating(extractValues(this.formField));

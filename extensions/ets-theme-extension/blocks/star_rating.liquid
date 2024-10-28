@@ -2,11 +2,13 @@
 
 {% if customer and customer.orders.size > 0 %}
   {% assign has_purchased = false %}
+  {% assign order_id = '' %}
   {% for order in customer.orders %}
     {% if order.financial_status == 'paid' %}
       {% for line_item in order.line_items %}
         {% if line_item.product.id == product.id %}
           {% assign has_purchased = true %}
+          {% assign order_id = order.id %}
           {% break %}
         {% endif %}
       {% endfor %}
@@ -20,6 +22,7 @@
       <input type="hidden" value="{{ customer.id }}" name="ets_customer_id">
       <input type="hidden" value="{{ customer.name }}" name="ets_customer_name">
       <input type="hidden" value="{{ customer.email }}" name="ets_customer_email">
+      <input type="hidden" value="{{ order_id }}" name="ets_order_id">
     </div>
   {% endif %}
 {% endif %}
@@ -30,9 +33,3 @@
   "target": "section"
 }
 {% endschema %}
-{% comment %}
-  "settings": [
-    { "type": "product", "id": "product", "label": "product", "autofill": true },
-    { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
-  ]
-{% endcomment %}

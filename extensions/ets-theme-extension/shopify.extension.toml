@@ -3,6 +3,3 @@ type = "theme"
 
 [embeds]
 enabled = true
-
-[[scripts]]
-file = "assets/js/rating.js"
